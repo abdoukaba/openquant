@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openquant"
+version = "0.3.0"
+description = "Professional-grade quant toolkit using public data sources (Yahoo Finance, FRED)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "openquant contributors" }]
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "scipy>=1.10",
+  "requests>=2.31",
+  "yfinance>=0.2.33",
+  "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+report    = ["matplotlib>=3.8"]
+analytics = ["scikit-learn>=1.3"]          # Ledoit-Wolf, PCA factor model
+calendar  = ["pandas-market-calendars>=4.3"]  # precise exchange calendars
+dev = [
+  "pytest>=7.4",
+  "pytest-cov>=4.1",
+  "ruff>=0.6.0",
+]
+full = [
+  "matplotlib>=3.8",
+  "scikit-learn>=1.3",
+  "pandas-market-calendars>=4.3",
+]
+
+[project.scripts]
+openquant = "openquant.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openquant"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
