@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from openquant.instruments import Equity, FX, FXPair, Option, OptionType, OptionStyle
+from openquant.instruments import Equity, FX, FXPair, Option
 from openquant.instruments.base import AssetClass
 
 
@@ -38,7 +38,6 @@ class TestFX:
     def test_fx_pair_parse_slash(self):
         p = FXPair.from_string("EUR/USD")
         assert p.ticker == "EURUSD"
-
 
 
 class TestOption:

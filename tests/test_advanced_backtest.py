@@ -1,10 +1,13 @@
 import numpy as np
 import pandas as pd
-import pytest
 from openquant.backtest import (
-    Backtest, TransactionCostModel, MarginConstraints,
-    RebalanceSchedule, Calendar, trading_days,
-    MultiStrategyBacktest, Order, OrderBook, OrderType, OrderSide,
+    Backtest,
+    TransactionCostModel,
+    MarginConstraints,
+    RebalanceSchedule,
+    MultiStrategyBacktest,
+    Order,
+    OrderBook,
 )
 from openquant.core.portfolio import Portfolio
 
@@ -128,20 +131,27 @@ class TestAdvancedBacktest:
 
     def test_costs_reduce_nav(self):
         # Strategy with high costs should underperform
-        px = _make_prices()
         tcm_high = TransactionCostModel(commission_bps=50, slippage_bps=50)
         tcm_zero = TransactionCostModel(commission_bps=0)
         md = _MockMD()
         p = Portfolio.from_weights({"A": 0.6, "B": 0.4})
-        res_high = Backtest(md, tcm_high, rebalance="D", initial_cash=100_000).run_target_weights(p, "2023-01-01", "2023-12-31")
-        res_zero = Backtest(md, tcm_zero, rebalance="D", initial_cash=100_000).run_target_weights(p, "2023-01-01", "2023-12-31")
-        assert float(res_zero.performance["nav"].iloc[-1]) >= float(res_high.performance["nav"].iloc[-1])
+        res_high = Backtest(md, tcm_high, rebalance="D", initial_cash=100_000).run_target_weights(
+            p, "2023-01-01", "2023-12-31"
+        )
+        res_zero = Backtest(md, tcm_zero, rebalance="D", initial_cash=100_000).run_target_weights(
+            p, "2023-01-01", "2023-12-31"
+        )
+        assert float(res_zero.performance["nav"].iloc[-1]) >= float(
+            res_high.performance["nav"].iloc[-1]
+        )
 
     def test_signal_fn_called(self):
         calls = []
+
         def signal(dt, prices, w_prev):
             calls.append(dt)
             return pd.Series({"A": 0.5, "B": 0.5})
+
         bt = Backtest(market_data=_MockMD(), rebalance="M", initial_cash=100_000)
         bt.run_signal(["A", "B"], signal, start="2023-01-01", end="2023-12-31")
         assert len(calls) > 0
@@ -204,7 +214,7 @@ class TestOrderBook:
         o = Order.limit_buy("AAPL", quantity=50, limit_price=170.0)
         book.submit(o)
         opens = pd.Series({"AAPL": 172.0})
-        lows = pd.Series({"AAPL": 168.0})   # low goes below limit
+        lows = pd.Series({"AAPL": 168.0})  # low goes below limit
         highs = pd.Series({"AAPL": 173.0})
         filled = book.fill_orders(pd.Timestamp("2024-01-15"), opens, highs, lows)
         assert len(filled) == 1
@@ -214,7 +224,7 @@ class TestOrderBook:
         o = Order.limit_buy("AAPL", quantity=50, limit_price=160.0)
         book.submit(o)
         opens = pd.Series({"AAPL": 175.0})
-        lows = pd.Series({"AAPL": 172.0})   # low never hits 160
+        lows = pd.Series({"AAPL": 172.0})  # low never hits 160
         highs = pd.Series({"AAPL": 177.0})
         filled = book.fill_orders(pd.Timestamp("2024-01-15"), opens, highs, lows)
         assert len(filled) == 0

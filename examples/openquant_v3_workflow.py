@@ -4,7 +4,7 @@ Demonstrates: instruments, DataContext, RiskModel, advanced Backtest
 """
 from __future__ import annotations
 import openquant as oq
-from openquant.instruments import Equity, Bond, Option, FX
+from openquant.instruments import Equity, Option, FX
 from openquant.risk import build_risk_model, HistoricalCovarianceModel, EWMACovarianceModel
 from openquant.backtest import (
     Backtest, MultiStrategyBacktest,
@@ -26,18 +26,11 @@ print("=" * 60)
 aapl = Equity.from_ticker("AAPL", exchange="NASDAQ", sector="Technology", country="US")
 msft = Equity.from_ticker("MSFT", exchange="NASDAQ", sector="Technology")
 eurusd = FX.from_pair("EURUSD", tenor="SPOT")
-bond = Bond.from_terms("UST5Y", maturity="2029-02-17", coupon=0.04, currency="USD")
 call_opt = Option.call("AAPL", strike=200.0, expiry="2025-12-19")
 put_opt  = Option.put("AAPL", strike=180.0, expiry="2025-12-19")
 
 print(f"  {aapl} | sector={aapl.sector} | class={aapl.asset_class}")
 print(f"  {eurusd} | pair={eurusd.pair}")
-print(f"  {bond}  | coupon={bond.coupon:.1%}")
-
-# Bond analytics
-ytm = bond.ytm(price=1000.0, as_of="2024-02-17")
-dur = bond.duration(ytm, as_of="2024-02-17") if ytm else None
-print(f"  Bond YTM={ytm:.2%}  MacaulayDuration={dur:.2f}y")
 
 # Option analytics
 S, T, r, sigma = 185.0, 0.75, 0.05, 0.22
@@ -65,7 +58,7 @@ try:
     prices2 = ctx.prices(["AAPL", "MSFT", "SPY"], start="2022-01-01", end="2024-01-01")
     print(f"  Cache hit — shape: {prices2.shape}")
 
-    returns = ctx.returns(["AAPL", "MSFT"], start="2022-01-01", end="2024-01-01")
+    returns = ctx.returns(["AAPL", "MSFT"], start="2022-01-01", end="2024-01-01", method="simple")
     print(f"  Returns shape: {returns.shape}")
 
 except Exception as e:

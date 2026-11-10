@@ -1,5 +1,4 @@
 import time
-import pytest
 import numpy as np
 import pandas as pd
 from openquant.data.context import DataContext, _TTLCache
@@ -31,7 +30,8 @@ class TestTTLCache:
 
     def test_clear(self):
         c = _TTLCache()
-        c.set("a", 1); c.set("b", 2)
+        c.set("a", 1)
+        c.set("b", 2)
         c.clear()
         assert len(c) == 0
 
@@ -47,6 +47,7 @@ class TestDataContext:
 
         # Monkey-patch internal fetch
         import openquant.data.yahoo as ymod
+
         original = ymod.prices
         ymod.prices = _fake_prices
         return ctx, original, ymod
@@ -62,8 +63,10 @@ class TestDataContext:
     def test_register_source(self):
         ctx = DataContext()
         idx = pd.date_range("2023-01-01", periods=10, freq="B")
+
         def custom_fn(ident, start=None, end=None):
             return pd.Series(range(10), index=idx, name=ident)
+
         ctx.register_source("CUSTOM_", custom_fn)
         s = ctx.get("CUSTOM_TICKER")
         assert len(s) == 10

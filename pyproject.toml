@@ -1,14 +1,15 @@
 [build-system]
-requires = ["hatchling>=1.21.0"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "openquant"
-version = "0.3.0"
+version = "0.3.1"
 description = "Professional-grade quant toolkit using public data sources (Yahoo Finance, FRED)."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "openquant contributors" }]
 dependencies = [
   "numpy>=1.24",
@@ -37,11 +38,27 @@ full = [
 [project.scripts]
 openquant = "openquant.cli:main"
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/openquant"]
+[tool.setuptools]
+packages = [
+  "openquant",
+  "openquant.backtest",
+  "openquant.core",
+  "openquant.data",
+  "openquant.instruments",
+  "openquant.risk",
+  "openquant.ts",
+  "openquant.viz",
+]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+openquant = "src"
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

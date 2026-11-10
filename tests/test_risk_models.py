@@ -57,7 +57,7 @@ class TestHistoricalCovarianceModel:
     def test_risk_contribution_sums_to_port_vol(self):
         r = _synth_returns(p=3)
         res = HistoricalCovarianceModel().fit(r).covariance()
-        w = {"A0": 1/3, "A1": 1/3, "A2": 1/3}
+        w = {"A0": 1 / 3, "A1": 1 / 3, "A2": 1 / 3}
         rc = res.risk_contribution(w)
         assert abs(rc.sum() - res.portfolio_vol(w)) < 1e-8
 
@@ -94,10 +94,13 @@ class TestFactorRiskModel:
         idx = pd.date_range("2020-01-01", periods=n, freq="B")
         f = pd.DataFrame({"f1": rng.normal(0, 0.01, n), "f2": rng.normal(0, 0.005, n)}, index=idx)
         betas = {"A0": [1.2, -0.3], "A1": [0.8, 0.5], "A2": [-0.2, 1.1]}
-        r = pd.DataFrame({
-            k: b[0]*f["f1"] + b[1]*f["f2"] + rng.normal(0, 0.005, n)
-            for k, b in betas.items()
-        }, index=idx)
+        r = pd.DataFrame(
+            {
+                k: b[0] * f["f1"] + b[1] * f["f2"] + rng.normal(0, 0.005, n)
+                for k, b in betas.items()
+            },
+            index=idx,
+        )
         return f, r
 
     def test_fit_betas_shape(self):
